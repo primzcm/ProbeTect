@@ -1,5 +1,5 @@
-from django.contrib.auth import login
-from django.contrib.auth.views import LoginView, LogoutView
+﻿from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -43,8 +43,10 @@ class AuthLoginView(AuthenticatedRedirectMixin, LoginView):
     authentication_form = EmailAuthenticationForm
 
 
-class AuthLogoutView(LogoutView):
-    next_page = reverse_lazy("landing")
+def auth_logout(request):
+    """Log the user out and always redirect to the landing page."""
+    logout(request)
+    return redirect("landing")
 
 
 class DashboardView(View):
