@@ -1,5 +1,8 @@
-﻿from django.conf import settings
-from django.core.validators import FileExtensionValidator
+from __future__ import annotations
+
+import uuid
+
+from django.conf import settings
 from django.db import models
 
 
@@ -22,7 +25,10 @@ class Material(models.Model):
     title = models.CharField(max_length=200, blank=True)
     subject = models.CharField(max_length=120, blank=True)
     description = models.TextField(blank=True)
-    pdf = models.FileField(upload_to=material_upload_path, validators=[FileExtensionValidator(["pdf"])])
+    storage_path = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    public_url = models.URLField(blank=True)
+    content_type = models.CharField(max_length=100, blank=True)
+    file_size = models.PositiveIntegerField(null=True, blank=True)
     visibility = models.CharField(max_length=16, choices=Visibility.choices, default=Visibility.PRIVATE)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.UPLOADED)
     original_filename = models.CharField(max_length=255, blank=True)
@@ -34,6 +40,8 @@ class Material(models.Model):
         ordering = ["-created_at"]
 
     def save(self, *args, **kwargs):
+        if not self.storage_path:
+            self.storage_path = f"materials/{self.owner_id}/{uuid.uuid4()}"
         if not self.title and self.original_filename:
             self.title = self.original_filename
         super().save(*args, **kwargs)
