@@ -27,6 +27,7 @@ class GenerateQuizView(LoginRequiredMixin, View):
         redirect_url = reverse('materials:upload') + '#queue'
         try:
             payload = generate_quiz(material, question_count=question_count)
+            reduced_from = payload.pop('reduced_from', None) if isinstance(payload, dict) else None
         except GeminiError as exc:
             quiz.status = Quiz.Status.ERROR
             quiz.error_message = str(exc)
@@ -34,6 +35,12 @@ class GenerateQuizView(LoginRequiredMixin, View):
             messages.error(request, f"Quiz generation failed: {exc}")
         else:
             questions = payload.get("questions", [])
+            if reduced_from:
+                actual = payload.get('question_count', len(questions))
+                messages.warning(
+                    request,
+                    f'Gemini could only generate {actual} questions instead of {reduced_from}.',
+                )
             if not questions:
                 quiz.status = Quiz.Status.ERROR
                 quiz.error_message = 'Gemini did not return any questions.'
@@ -42,7 +49,7 @@ class GenerateQuizView(LoginRequiredMixin, View):
             else:
                 quiz.title = payload.get('quiz_title', material.title or 'Generated Quiz')
                 quiz.model_name = getattr(settings, 'GEMINI_MODEL', '')
-                quiz.question_count = len(questions)
+                quiz.question_count = payload.get('question_count', len(questions))
                 quiz.status = Quiz.Status.READY
                 quiz.save(update_fields=['title', 'model_name', 'question_count', 'status', 'updated_at'])
                 for index, item in enumerate(questions):
