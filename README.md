@@ -92,3 +92,19 @@ python manage.py test
 ## Documentation tracker
 See [`DOCS_UPDATES.md`](DOCS_UPDATES.md) for a running log of documentation changes, release prep notes, and sprint recaps.
 
+
+
+## AI Quiz Generation
+
+Install the PDF and Gemini helpers and set the environment variables:
+
+```bash
+pip install pypdf
+```
+
+```env
+GEMINI_API_KEY=your-google-ai-key
+GEMINI_MODEL=gemini-2.0-flash
+```
+
+After migrating (`python manage.py migrate`), upload a PDF and use the *Generate quiz* button on the materials page.
