@@ -1,20 +1,15 @@
-# Documentation Updates Log
+# Documentation & Changes Log
 
-Use this log to record noteworthy documentation changes, release prep, and sprint decisions. Add entries in reverse chronological order so the latest context stays on top.
+Record of notable changes to code and docs. Add entries with date, scope, and brief summary.
 
-| Date       | Author  | Notes |
-|------------|---------|-------|
-| 2025-09-25 | Codex   | Rewrote `AGENTS.md` to align with repository working agreements (layout, conventions, execution rules). |
-| 2025-09-25 | Codex   | Moved `AGENTS.md` to repo root and refreshed README/doc references. |
-| 2025-09-25 | Codex   | Added `AGENTS.md` to document automation practices and updated README project layout/doc references. |
-| 2025-09-25 | Codex   | Replaced bare README with full project overview, setup, and workflow notes. Added `DOCS_UPDATES.md` tracker and `docs/ARCHITECTURE.md` high-level architecture guide. |
+## 2025-09-25 � Repository documentation overhaul
 
-## How to Contribute to Documentation
-- When you touch docs (README, architecture notes, onboarding guides, etc.), add a new row describing the change.
-- For multi-file updates, link to the relevant sections or PR in the Notes column.
-- Keep changelog entries concise but informative so teammates can scan them quickly.
+- Docs: Replaced the bare README with a full project overview, setup workflow, and created this changelog.
+- Architecture: Added docs/ARCHITECTURE.md outlining the system at a high level.
+- Conventions: Authored AGENTS.md covering automation practices, repo agreements, and moved it to the repo root.
 
-## Future Doc Ideas
-- Deployment playbook (Heroku/Supabase pairing).
-- Quiz generation specification once the pipeline lands.
-- Troubleshooting guide for Supabase storage and local Postgres setup.
+## 2025-09-27 � Quiz UX polish & Gemini update
+
+- Quizzes: Added list/detail templates so users can view and take generated quizzes.
+- Navigation: Linked quizzes into the main nav and material queue for quicker access.
+- AI Config: Switched the default Gemini model to gemini-2.5-flash and updated environment settings.
