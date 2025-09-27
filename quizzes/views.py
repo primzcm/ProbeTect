@@ -94,15 +94,18 @@ class QuizDetailView(LoginRequiredMixin, View):
 
     def get(self, request, pk: int):
         quiz = self.get_quiz(request, pk)
+        questions = list(quiz.questions.all())
+        entries = [{'question': question, 'result': None} for question in questions]
         return render(request, self.template_name, {
             'quiz': quiz,
-            'questions': quiz.questions.all(),
+            'questions': questions,
+            'entries': entries,
         })
 
     def post(self, request, pk: int):
         quiz = self.get_quiz(request, pk)
-        questions = quiz.questions.all()
-        results = []
+        questions = list(quiz.questions.all())
+        entries = []
         score = 0
         for question in questions:
             field_name = f'q_{question.id}'
@@ -114,17 +117,19 @@ class QuizDetailView(LoginRequiredMixin, View):
                 is_correct = user_answer.lower() == correct_answer.lower() if user_answer and correct_answer else False
             if is_correct:
                 score += 1
-            results.append({
+            entries.append({
                 'question': question,
-                'user_answer': user_answer,
-                'correct': is_correct,
+                'result': {
+                    'user_answer': user_answer,
+                    'correct': is_correct,
+                },
             })
-        total = len(questions) or 1
+        total = len(entries) or 1
         percent = round((score / total) * 100, 1)
         return render(request, self.template_name, {
             'quiz': quiz,
             'questions': questions,
-            'results': results,
+            'entries': entries,
             'submitted': True,
             'score': score,
             'total': total,
