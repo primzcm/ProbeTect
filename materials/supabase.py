@@ -22,12 +22,12 @@ def _get_config() -> tuple[str, str, str]:
     return url.rstrip("/"), key, bucket
 
 
-def _perform_request(method: str, url: str, *, headers: dict[str, str] | None = None, data: bytes | None = None) -> bytes:
+def _perform_request(method: str, url: str, *, headers: dict[str, str] | None = None, data: bytes | None = None, timeout: int = 30) -> bytes:
     request = urllib.request.Request(url, data=data, method=method)
     for key, value in (headers or {}).items():
         request.add_header(key, value)
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
             return response.read()
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode(errors="ignore")[:200]
@@ -60,6 +60,12 @@ def upload_file(file_obj, *, owner_id: int, folder: str = "materials") -> tuple[
 
     public_url = f"{url}/storage/v1/object/public/{bucket}/{unique_name}"
     return unique_name, public_url
+
+
+def download_file(storage_path: str) -> bytes:
+    url, service_key, bucket = _get_config()
+    endpoint = f"{url}/storage/v1/object/{bucket}/{storage_path}"
+    return _perform_request("GET", endpoint, headers={"Authorization": f"Bearer {service_key}"}, timeout=60)
 
 
 def delete_file(storage_path: str) -> None:
